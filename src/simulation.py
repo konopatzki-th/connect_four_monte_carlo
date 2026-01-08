@@ -31,3 +31,33 @@ plt.savefig("../figures/win_rates.png")
 plt.close()
 
 print(df)
+
+# ---------------------------------------
+# FIGURE 2: Outcome distribution
+# ---------------------------------------
+
+labels = ["Start Player Wins", "Other Player Wins", "Draws"]
+
+p1_values = [
+    res_p1["start_player_wins"],
+    res_p1["other_player_wins"],
+    res_p1["draws"]
+]
+
+p2_values = [
+    res_p2["start_player_wins"],
+    res_p2["other_player_wins"],
+    res_p2["draws"]
+]
+
+x = range(len(labels))
+
+plt.figure()
+plt.bar(x, p1_values, label="Player 1 starts")
+plt.bar(x, p2_values, bottom=p1_values, label="Player 2 starts")
+plt.xticks(x, labels)
+plt.ylabel("Number of Games")
+plt.title("Outcome Distribution of Connect Four Games")
+plt.legend()
+plt.savefig("../figures/outcome_distribution.png")
+plt.close()
