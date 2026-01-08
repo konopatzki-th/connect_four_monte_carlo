@@ -287,11 +287,6 @@ if __name__ == "__main__":
         advantage = (outcomes[p1] - outcomes[p2]) / total_games
         starting_advantages[f"{p1} vs {p2}"] = advantage
 
-        # PRINT RESULTS
-        print("\nStarting player advantages (already computed):\n")
-        for matchup, advantage in starting_advantages.items():
-            print(f"{matchup}: {advantage:.3f}")
-
         # ---------------------------------
         # FIGURE 1: Distribution of Monte Carlo advantage
         # ---------------------------------
