@@ -9,7 +9,7 @@ from itertools import combinations
 
 NUM_ROWS = 6  # Number of rows on the Connect Four board
 NUM_COLS = 7  # Number of columns on the Connect Four board
-BASE_SIM = 200  # Base number of simulations per player pair
+BASE_SIM = 100  # Base number of simulations per player pair
 
 # Ensure the "figures" directory exists for saving plots
 os.makedirs("figures", exist_ok=True)
