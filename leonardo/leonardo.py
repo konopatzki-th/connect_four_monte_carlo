@@ -6,8 +6,23 @@ from itertools import combinations
 NUM_ROWS = 6
 NUM_COLS = 7
 
-# simulations per pairing
-NUM_SIMULATIONS = 100
+BASE_SIM = 100
+
+# Balance-Indikator (0=einseitig, 1=ausgeglichen)
+balance_indicator = {
+    ("4 Jahre","7 Jahre"): 0.1,
+    ("4 Jahre","9 Jahre"): 0.1,
+    ("4 Jahre","11 Jahre"): 0.05,
+    ("7 Jahre","9 Jahre"): 0.5,
+    ("7 Jahre","11 Jahre"): 0.7,
+    ("9 Jahre","11 Jahre"): 0.8
+}
+
+# Berechne Anzahl Simulationen pro Paarung
+simulations_per_pair = {}
+for pair, balance in balance_indicator.items():
+    simulations_per_pair[pair] = int(BASE_SIM * (1 + balance*2))
+
 
 
 # board function
@@ -178,15 +193,17 @@ players = {
 results = {}
 
 for p1_name, p2_name in combinations(players.keys(), 2):
+    # Anzahl Simulationen für diese Paarung
+    SIMULATIONEN = simulations_per_pair[(p1_name, p2_name)]
     func1 = players[p1_name]
     func2 = players[p2_name]
-    outcomes = {p1_name: 0, p2_name: 0, "Unentschieden": 0}
+    outcomes = {p1_name:0, p2_name:0, "Unentschieden":0}
     columns_p1 = np.zeros(NUM_COLS, dtype=int)
     columns_p2 = np.zeros(NUM_COLS, dtype=int)
     wins_p1 = np.zeros(NUM_COLS, dtype=int)
     wins_p2 = np.zeros(NUM_COLS, dtype=int)
 
-    for i in range(NUM_SIMULATIONS):
+    for i in range(SIMULATIONEN):
         winner = simulate_game_with_wins(func1, func2, columns_p1, columns_p2, wins_p1, wins_p2)
         if winner == 1:
             outcomes[p1_name] += 1
@@ -195,12 +212,19 @@ for p1_name, p2_name in combinations(players.keys(), 2):
         else:
             outcomes["Unentschieden"] += 1
         if (i + 1) % 20 == 0:
-            print(f"{p1_name} vs {p2_name}: {i + 1}/{NUM_SIMULATIONS} Spiele abgeschlossen")
+            print(f"{p1_name} vs {p2_name}: {i + 1}/{SIMULATIONEN} Spiele abgeschlossen")
 
     # Wahrscheinlichkeiten berechnen
-    prob_p1 = outcomes[p1_name] / NUM_SIMULATIONS
-    prob_p2 = outcomes[p2_name] / NUM_SIMULATIONS
-    prob_draw = outcomes["Unentschieden"] / NUM_SIMULATIONS
+    prob_p1 = float(outcomes[p1_name]) / SIMULATIONEN
+    prob_p2 = float(outcomes[p2_name]) / SIMULATIONEN
+    prob_draw = float(outcomes["Unentschieden"]) / SIMULATIONEN
+    # Standardfehler berechnen
+    se_p1 = np.sqrt(prob_p1 * (1 - prob_p1) / SIMULATIONEN)
+    se_p2 = np.sqrt(prob_p2 * (1 - prob_p2) / SIMULATIONEN)
+    se_draw = np.sqrt(prob_draw * (1 - prob_draw) / SIMULATIONEN)
+    print(f"{p1_name}: Wahrscheinlichkeit={prob_p1:.3f}, SE={se_p1:.3f}")
+    print(f"{p2_name}: Wahrscheinlichkeit={prob_p2:.3f}, SE={se_p2:.3f}")
+    print(f"Unentschieden: Wahrscheinlichkeit={prob_draw:.3f}, SE={se_draw:.3f}")
 
     # Quoten berechnen (vereinfacht: Quote = 1 / Wahrscheinlichkeit)
     quote_p1 = (1 / prob_p1 if prob_p1 > 0 else np.inf)
@@ -221,7 +245,7 @@ for p1_name, p2_name in combinations(players.keys(), 2):
 # Ergebnisse ausgeben
 # -------------------------
 for (p1, p2), data in results.items():
-    print(f"\n{p1} vs {p2} ({NUM_SIMULATIONS} Spiele):")
+    print(f"\n{p1} vs {p2} ({SIMULATIONEN} Spiele):")
     print(
         f"{p1} gewinnt: {data['outcomes'][p1]} ({data['probabilities'][0] * 100:.1f}%) → Quote ≈ {data['quotes'][0]:.2f}")
     print(
