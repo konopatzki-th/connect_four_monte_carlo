@@ -51,8 +51,15 @@ change for different player skill levels?
 
 
 ├── src/
+    └──
 
-│   └── simulation.py        # Main simulation and analysis code
+│    └── _init_.py
+
+│    └── board.py
+
+│    └── player.py
+
+│   └── simulation.py # Main simulation and analysis code
 
 ├── figures/
 
@@ -62,7 +69,7 @@ change for different player skill levels?
 
 ├── notebook/
 
-│ └── simulation_demo.ipynb
+│ └── final.ipynb
 
 ├── README.md
 
