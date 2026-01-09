@@ -56,11 +56,13 @@ change for different player skill levels?
 
 ├── figures/
 
-│   ├── starting\_player\_advantage\_overview.png
+│   └── win_probabilities.png
 
-│   └── \*\_advantage\_distribution.png
+│   └── starting_player_advantage.png
 
-├── results/                 
+├── notebook/
+
+│ └── simulation_demo.ipynb
 
 ├── README.md
 
